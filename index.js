@@ -1,6 +1,7 @@
 const EventEmitter = require('events');
 const path = require('path');
 
+const _ = require('lodash');
 const fsp = require('fs-promise');
 const pug = require('pug');
 
@@ -83,6 +84,16 @@ class SectorSlide extends EventEmitter {
 
     initDocRoot () {
         return fsp.mkdirp(this.docroot);
+    }
+
+    startWatcher () {
+        const chokidar = require('chokidar');
+        _.each(this.files, (content, src) => {
+            chokidar.watch(src).on('all', (event, path) => {
+                this.files[src] = null;
+                this.start();
+            });
+        });
     }
 };
 
