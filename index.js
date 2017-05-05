@@ -17,7 +17,7 @@ class SectorSlide extends EventEmitter {
         this.files = {};
     }
 
-    start () {
+    build () {
         return Promise.all([
             this.loadDocument(),
             this.loadPugTemplate(),
@@ -91,7 +91,8 @@ class SectorSlide extends EventEmitter {
         _.each(this.files, (content, src) => {
             chokidar.watch(src).on('all', (event, path) => {
                 this.files[src] = null;
-                this.start();
+                this.build();
+                // TODO: この際のエラーはどこに行く？
             });
         });
     }
