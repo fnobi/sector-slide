@@ -5,6 +5,8 @@ const fsp = require('fs-promise');
 const md = require('markdown').markdown;
 const pug = require('pug');
 
+const renderSlideSection = require('./lib/renderSlideSection');
+
 const TEMPLATE_PUG = `${__dirname}/src/pug/index.pug`;
 
 class SectorSlide extends EventEmitter {
@@ -46,7 +48,9 @@ class SectorSlide extends EventEmitter {
     
     renderDocumentHTML () {
         return new Promise((resolve, reject) => {
-            this.documentHTML = md.toHTML(this.documentMd).replace(/\n */g, '');
+            this.documentHTML = renderSlideSection(
+                md.toHTMLTree(this.documentMd)
+            );
             resolve(this.documentHTML);
         });
     }

@@ -11,6 +11,7 @@
     "chokidar": "^1.6.1",
     "colors": "^1.1.2",
     "fs-promise": "^2.0.2",
+    "lodash": "^4.17.4",
     "markdown": "^0.5.0",
     "optimist": "^0.6.1",
     "pug": "^2.0.0-rc.1"
