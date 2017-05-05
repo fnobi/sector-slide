@@ -2,7 +2,6 @@ const EventEmitter = require('events');
 const path = require('path');
 
 const fsp = require('fs-promise');
-const md = require('markdown').markdown;
 const pug = require('pug');
 
 const renderSlideSection = require('./lib/renderSlideSection');
@@ -79,9 +78,7 @@ class SectorSlide extends EventEmitter {
     }
 
     renderDocumentHTML (markdown) {
-        return renderSlideSection(
-            md.toHTMLTree(markdown)
-        );
+        return renderSlideSection(markdown);
     }
 
     initDocRoot () {
