@@ -2,7 +2,7 @@ const EventEmitter = require('events');
 const path = require('path');
 
 const fsp = require('fs-promise');
-const markdown = require('markdown').markdown;
+const md = require('markdown').markdown;
 const pug = require('pug');
 
 const TEMPLATE_PUG = `${__dirname}/src/pug/index.pug`;
@@ -10,7 +10,6 @@ const TEMPLATE_PUG = `${__dirname}/src/pug/index.pug`;
 class SectorSlide extends EventEmitter {
     constructor (opts = {}) {
         super();
-        this.documentMarkdown = opts.documentMarkdown;
         this.src = opts.src;
         this.docroot = opts.docroot;
     }
@@ -32,7 +31,7 @@ class SectorSlide extends EventEmitter {
 
             fsp.readFile(this.src, { encoding: 'utf8' }).then(
                 (body) => {
-                    this.documentMarkdown = body;
+                    this.documentMd = body;
                     resolve(body);
                 },
                 (err) => {
@@ -47,9 +46,7 @@ class SectorSlide extends EventEmitter {
     
     renderDocumentHTML () {
         return new Promise((resolve, reject) => {
-            this.documentHTML = markdown
-                      .toHTML(this.documentMarkdown)
-                      .replace(/\n */g, '');
+            this.documentHTML = md.toHTML(this.documentMd).replace(/\n */g, '');
             resolve(this.documentHTML);
         });
     }
