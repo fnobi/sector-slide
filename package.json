@@ -1,0 +1,8 @@
+{
+  "name": "sector-slide",
+  "version": "1.0.0",
+  "description": "markdown slide tool.",
+  "main": "index.js",
+  "author": "Fujisawa Shin",
+  "license": "MIT"
+}
