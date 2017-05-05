@@ -25,10 +25,6 @@ class SectorSlide extends EventEmitter {
 
     loadDocumentMarkdown () {
         return new Promise((resolve, reject) => {
-            if (this.documentMarkdown) {
-                resolve();
-                return;
-            }
             if (!this.src) {
                 reject(new Error('src is not found.'));
                 return;
