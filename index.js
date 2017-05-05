@@ -14,54 +14,51 @@ class SectorSlide extends EventEmitter {
         super();
         this.src = opts.src;
         this.docroot = opts.docroot;
+        this.files = {};
     }
 
     start () {
         return Promise.resolve()
-            .then(() => { return this.loadDocumentMarkdown(); })
-            .then(() => { return this.renderDocumentHTML(); })
-            .then(() => { return this.renderPug(); })
-            .then(() => { return this.exportWeb(); });
+            .then(() => { return this.loadFile(this.src); })
+            .then(() => { return this.loadFile(TEMPLATE_PUG); })
+            .then(() => { return this.initDocRoot(); })
+            .then(() => {
+                const pugTemplate = this.files[TEMPLATE_PUG];
+                const documentMarkdown = this.files[this.src];
+                
+                const fn = pug.compile(pugTemplate, {
+                    pretty: false
+                });
+                const dest = fn({
+                    content: this.renderDocumentHTML(documentMarkdown)
+                });
+                return fsp.writeFile(
+                    path.resolve(this.docroot, 'index.html'),
+                    dest
+                );
+            });
     }
 
-    loadDocumentMarkdown () {
+    loadFile (src) {
         return new Promise((resolve, reject) => {
-            if (!this.src) {
+            if (!src) {
                 reject(new Error('src is not found.'));
                 return;
             }
 
-            fsp.readFile(this.src, { encoding: 'utf8' }).then(
+            if (this.files[src]) {
+                resolve(this.files[src]);
+                return;
+            }
+
+            fsp.readFile(src, { encoding: 'utf8' }).then(
                 (body) => {
-                    this.documentMd = body;
+                    this.files[src] = body;
                     resolve(body);
                 },
                 (err) => {
                     reject(new Error([
-                        `fail to load file "${this.src}".`,
-                        err.toString()
-                    ].join('\n')));
-                }
-            );
-        });
-    }
-    
-    renderDocumentHTML () {
-        return new Promise((resolve, reject) => {
-            this.documentHTML = renderSlideSection(
-                md.toHTMLTree(this.documentMd)
-            );
-            resolve(this.documentHTML);
-        });
-    }
-
-    loadPugTemplate () {
-        return new Promise((resolve, reject) => {
-            fsp.readFile(TEMPLATE_PUG, { encoding: 'utf8' }).then(
-                resolve,
-                (err) => {
-                    reject(new Error([
-                        'fail to load pug template',
+                        `fail to load file "${src}".`,
                         err.toString()
                     ].join('\n')));
                 }
@@ -69,29 +66,18 @@ class SectorSlide extends EventEmitter {
         });
     }
 
-    renderPug () {
-        return new Promise((resolve, reject) => {
-            this.loadPugTemplate().then((pugTemplate) => {
-                const fn = pug.compile(pugTemplate, {
-                    pretty: false
-                });
-                this.indexHTML = fn({
-                    content: this.documentHTML
-                });
-                resolve(this.indexHTML);
-            });
-        });
+    clearFile (src) {
+        this.files[src] = null;
     }
 
-    exportWeb () {
-        return Promise.resolve().then(() => {
-            return fsp.mkdirp(this.docroot);
-        }).then(() => {
-            return fsp.writeFile(
-                path.resolve(this.docroot, 'index.html'),
-                this.indexHTML
-            );
-        });
+    renderDocumentHTML (documentMarkdown) {
+        return renderSlideSection(
+            md.toHTMLTree(documentMarkdown)
+        );
+    }
+
+    initDocRoot () {
+        return fsp.mkdirp(this.docroot);
     }
 };
 
