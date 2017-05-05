@@ -18,6 +18,8 @@ class SectorSlide extends EventEmitter {
     }
 
     build () {
+        this.emit('startBuild');
+        
         return Promise.all([
             this.loadDocument(),
             this.loadPugTemplate(),
@@ -36,7 +38,10 @@ class SectorSlide extends EventEmitter {
                     content: this.renderDocumentHTML(document)
                 })
             );
-        });
+        }).then(
+            () => { this.emit('endBuild'); },
+            (err) => { this.emit('error', err); }
+        );
     }
 
     loadDocument () {
@@ -58,6 +63,10 @@ class SectorSlide extends EventEmitter {
                 resolve(this.files[src]);
                 return;
             }
+
+            this.emit('loadFile', {
+                path: src
+            });
 
             fsp.readFile(src, { encoding: 'utf8' }).then(
                 (body) => {
@@ -89,10 +98,12 @@ class SectorSlide extends EventEmitter {
     startWatcher () {
         const chokidar = require('chokidar');
         _.each(this.files, (content, src) => {
-            chokidar.watch(src).on('all', (event, path) => {
+            chokidar.watch(src).on('change', (path) => {
+                this.emit('changeFile', {
+                    path: path
+                });
                 this.files[src] = null;
                 this.build();
-                // TODO: この際のエラーはどこに行く？
             });
         });
     }
