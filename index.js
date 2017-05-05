@@ -18,25 +18,33 @@ class SectorSlide extends EventEmitter {
     }
 
     start () {
-        return Promise.resolve()
-            .then(() => { return this.loadFile(this.src); })
-            .then(() => { return this.loadFile(TEMPLATE_PUG); })
-            .then(() => { return this.initDocRoot(); })
-            .then(() => {
-                const pugTemplate = this.files[TEMPLATE_PUG];
-                const documentMarkdown = this.files[this.src];
-                
-                const fn = pug.compile(pugTemplate, {
-                    pretty: false
-                });
-                const dest = fn({
-                    content: this.renderDocumentHTML(documentMarkdown)
-                });
-                return fsp.writeFile(
-                    path.resolve(this.docroot, 'index.html'),
-                    dest
-                );
+        return Promise.all([
+            this.loadDocument(),
+            this.loadPugTemplate(),
+            this.initDocRoot()
+        ]).then((values) => {
+            const document = values.shift();
+            const pugTemplate = values.shift();
+            
+            const compilePug = pug.compile(pugTemplate, {
+                pretty: false
             });
+            
+            return fsp.writeFile(
+                path.resolve(this.docroot, 'index.html'),
+                compilePug({
+                    content: this.renderDocumentHTML(document)
+                })
+            );
+        });
+    }
+
+    loadDocument () {
+        return this.loadFile(this.src);
+    }
+
+    loadPugTemplate () {
+        return this.loadFile(TEMPLATE_PUG);
     }
 
     loadFile (src) {
@@ -70,9 +78,9 @@ class SectorSlide extends EventEmitter {
         this.files[src] = null;
     }
 
-    renderDocumentHTML (documentMarkdown) {
+    renderDocumentHTML (markdown) {
         return renderSlideSection(
-            md.toHTMLTree(documentMarkdown)
+            md.toHTMLTree(markdown)
         );
     }
 
