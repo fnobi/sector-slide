@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "markdown slide tool.",
   "main": "index.js",
+  "scripts": {
+    "start": "gulp"
+  },
   "author": "Fujisawa Shin",
   "license": "MIT",
   "bin": "./bin/sector-slide",
@@ -14,7 +17,25 @@
     "lodash": "^4.17.4",
     "markdown": "^0.5.0",
     "optimist": "^0.6.1",
-    "pug": "^2.0.0-rc.1",
-    "reset.css": "^2.0.2"
+    "pug": "^2.0.0-rc.1"
+  },
+  "devDependencies": {
+    "babel": "6.3.*",
+    "babel-preset-es2015": "6.3.*",
+    "babelify": "7.2.*",
+    "browserify": "12.0.*",
+    "gulp": "git://github.com/gulpjs/gulp.git#4.0",
+    "gulp-pleeease": "2.0.*",
+    "gulp-sass": "2.1.*",
+    "gulp-sass-glob": "^1.0.6",
+    "gulp-watch": "^4.3.8",
+    "read-config": "2.0.*",
+    "reset.css": "^2.0.2",
+    "vinyl-source-stream": "1.1.*"
+  },
+  "babel": {
+    "presets": [
+      "es2015"
+    ]
   }
 }
