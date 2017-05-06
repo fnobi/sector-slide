@@ -25,6 +25,8 @@ section, article {
     width: 100%;
     height: 100%;
     overflow: hidden;
+    font-size: 3vw;
+    line-height: 1.5;
 
     &[data-ready="true"] {
         transition: transform 0.2s;
@@ -41,6 +43,10 @@ section, article {
     &[data-state="future"] {
         transform: translateX(100%);
     }
+
+    h1, h2, h3, h4 {
+        font-weight: bold;
+    }
 }
 
 
@@ -49,7 +55,26 @@ section, article {
  * =========================== */
 
 section {
-    background-color: #ccc;
+    h1, h2, h3, h4 {
+        position: absolute;
+        top: 50%;
+        left: 0%;
+        width: 100%;
+        text-align: center;
+        transform: translateY(-50%);
+    }
+    h1 {
+        font-size: 10vw;
+    }
+    h2 {
+        font-size: 8vw;
+    }
+    h3 {
+        font-size: 6vw;
+    }
+    h4 {
+        font-size: 4vw;
+    }
 }
 
 
@@ -58,5 +83,34 @@ section {
  * =========================== */
 
 article {
-    background-color: #fff;
+    > * {
+        margin: 2vw;
+    }
+    
+    header {
+        h1, h2, h3, h4 {
+            font-size: 5vw;
+            display: none;
+            &:last-child {
+                display: block;
+            }
+        }
+    }
+
+    li {
+        margin: 2vw 0vw;
+    }
+
+    ul {
+        li {
+            position: relative;
+            padding-left: 1em;
+            &:before {
+                content: '・';
+                position: absolute;
+                top: 0px;
+                left: 0px;
+            }
+        }
+    }
 }
