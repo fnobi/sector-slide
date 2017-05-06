@@ -4,7 +4,8 @@
   "description": "markdown slide tool.",
   "main": "index.js",
   "scripts": {
-    "start": "gulp"
+    "dev-template": "gulp",
+    "dev-readme": "./bin/sector-slide --server -n demo ./README.md"
   },
   "author": "Fujisawa Shin",
   "license": "MIT",
