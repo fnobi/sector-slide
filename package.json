@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev-template": "gulp",
-    "dev-readme": "./bin/sector-slide --server -r demo ./README.md"
+    "dev-readme": "./bin/sector-slide --server -n demo ./README.md"
   },
   "author": "Fujisawa Shin",
   "license": "MIT",
