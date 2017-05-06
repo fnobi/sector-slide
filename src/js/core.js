@@ -5,8 +5,29 @@ let currentIndex;
 
 
 function init () {
-    setPageIndex(0);
+    const defaultPage = parseHash();
+    setPageIndex((defaultPage >= 0) ? defaultPage : 0);
+    initListeners();
     setTimeout(setReady);
+}
+
+function parseHash () {
+    const hash = location.hash;
+    const pageMatch = hash.match(/^#?p([1-9][0-9]*)/);
+    if (pageMatch) {
+        return parseInt(pageMatch[1]);
+    } else {
+        return -1;
+    }
+}
+
+function initListeners () {
+    window.addEventListener('hashchange', () => {
+        const page = parseHash();
+        if (page >= 0) {
+            setPageIndex(page);
+        }
+    });
 }
 
 function setReady (isReady=true) {
@@ -32,6 +53,7 @@ function setPageIndex (index) {
     }
     
     currentIndex = index;
+    location.hash = `#p${index}`;
 }
 
 window.addEventListener('keydown', function (e) {
