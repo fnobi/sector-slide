@@ -8,6 +8,7 @@ import sassGlob from 'gulp-sass-glob';
 import pleeease from 'gulp-pleeease';
 import browserify from 'browserify';
 import babelify from 'babelify';
+import uglifyify from 'uglifyify';
 import readConfig from 'read-config';
 import watch from 'gulp-watch';
 
@@ -35,6 +36,7 @@ gulp.task('css', gulp.series('sass'));
 gulp.task('browserify', () => {
     return browserify(`${SRC}/js/core.js`)
         .transform(babelify)
+        .transform(uglifyify)
         .bundle()
         .pipe(source('core.js'))
         .pipe(gulp.dest(DEST));

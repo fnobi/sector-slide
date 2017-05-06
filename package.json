@@ -31,6 +31,7 @@
     "gulp-watch": "^4.3.8",
     "read-config": "2.0.*",
     "reset.css": "^2.0.2",
+    "uglifyify": "^3.0.4",
     "vinyl-source-stream": "1.1.*"
   },
   "babel": {
