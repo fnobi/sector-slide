@@ -1,3 +1,5 @@
+@import 'node_modules/reset.css/reset.css';
+
 /* =========================== *
     main
  * =========================== */
@@ -23,26 +25,22 @@ section, article {
     width: 100%;
     height: 100%;
     overflow: hidden;
-}
 
-section[data-ready="true"],
-article[data-ready="true"] {
-    transition: transform 0.2s;
-}
+    &[data-ready="true"] {
+        transition: transform 0.2s;
+    }
 
-section[data-state="current"],
-article[data-state="current"] {
-    transform: translateX(0%);
-}
+    &[data-state="current"] {
+        transform: translateX(0%);
+    }
 
-section[data-state="past"],
-article[data-state="past"] {
-    transform: translateX(-100%);
-}
+    &[data-state="past"] {
+        transform: translateX(-100%);
+    }
 
-section[data-state="future"],
-article[data-state="future"] {
-    transform: translateX(100%);
+    &[data-state="future"] {
+        transform: translateX(100%);
+    }
 }
 
 
@@ -53,6 +51,7 @@ article[data-state="future"] {
 section {
     background-color: #ccc;
 }
+
 
 /* =========================== *
     article (content page)
