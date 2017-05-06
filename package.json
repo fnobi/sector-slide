@@ -9,11 +9,13 @@
   "dependencies": {
     "browser-sync": "^2.18.8",
     "chokidar": "^1.6.1",
+    "clean-css": "^4.0.12",
     "colors": "^1.1.2",
     "fs-promise": "^2.0.2",
     "lodash": "^4.17.4",
     "markdown": "^0.5.0",
     "optimist": "^0.6.1",
-    "pug": "^2.0.0-rc.1"
+    "pug": "^2.0.0-rc.1",
+    "reset.css": "^2.0.2"
   }
 }

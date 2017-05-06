@@ -47,5 +47,7 @@ html(lang="ja")
       //- このページをはてぶ・シェアする際、使われるべきURLを明示する指定
       //- wwwやhttps、getパラメータなど、微妙に違うURLでアクセスされても、使われるURLをひとつに絞れる
       link(rel="canonical" href=url)
+    style!= style
   body
-    != content
+    main
+      != content

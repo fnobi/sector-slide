@@ -4,10 +4,13 @@ const path = require('path');
 const _ = require('lodash');
 const fsp = require('fs-promise');
 const pug = require('pug');
+const CleanCSS = require('clean-css');
 
 const renderSlideSection = require('./lib/renderSlideSection');
 
 const TEMPLATE_PUG = `${__dirname}/src/pug/index.pug`;
+const CSS_RESET = `${__dirname}/node_modules/reset.css/reset.css`;
+const CSS_CORE = `${__dirname}/src/css/core.css`;
 
 class SectorSlide extends EventEmitter {
     constructor (opts = {}) {
@@ -21,35 +24,37 @@ class SectorSlide extends EventEmitter {
         this.emit('startBuild');
         
         return Promise.all([
-            this.loadDocument(),
-            this.loadPugTemplate(),
+            this.loadFile(this.src),
+            this.loadFile(TEMPLATE_PUG),
+            this.loadFile(CSS_RESET),
+            this.loadFile(CSS_CORE),
             this.initDocRoot()
         ]).then((values) => {
             const document = values.shift();
             const pugTemplate = values.shift();
+            const resetCSS = values.shift();
+            const coreCSS = values.shift();
             
             const compilePug = pug.compile(pugTemplate, {
                 pretty: false
             });
+
+            const style = new CleanCSS({}).minify([
+                resetCSS,
+                coreCSS
+            ].join('')).styles;
             
             return fsp.writeFile(
                 path.resolve(this.docroot, 'index.html'),
                 compilePug({
-                    content: this.renderDocumentHTML(document)
+                    content: this.renderDocumentHTML(document),
+                    style: style
                 })
             );
         }).then(
             () => { this.emit('endBuild'); },
             (err) => { this.emit('error', err); }
         );
-    }
-
-    loadDocument () {
-        return this.loadFile(this.src);
-    }
-
-    loadPugTemplate () {
-        return this.loadFile(TEMPLATE_PUG);
     }
 
     loadFile (src) {
