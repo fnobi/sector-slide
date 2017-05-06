@@ -4,16 +4,14 @@
 var ATTR_STATE = 'data-state';
 
 var pages = document.querySelectorAll('section,article');
-var currentIndex;
+var currentIndex = void 0;
 
 function setReady() {
     var isReady = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
 
     for (var i = 0; i < pages.length; i++) {
-        (function (i) {
-            var page = pages[i];
-            page.setAttribute('data-ready', isReady);
-        })(i);
+        var page = pages[i];
+        page.setAttribute('data-ready', isReady);
     }
 }
 
@@ -22,17 +20,17 @@ function setPageIndex(index) {
     index = Math.min(index, pages.length - 1);
 
     for (var i = 0; i < pages.length; i++) {
-        (function (i) {
-            var page = pages[i];
-            if (i === index) {
-                page.setAttribute(ATTR_STATE, 'current');
-            } else if (i < index) {
-                page.setAttribute(ATTR_STATE, 'past');
-            } else if (i > index) {
-                page.setAttribute(ATTR_STATE, 'future');
-            }
-        })(i);
-    }currentIndex = index;
+        var page = pages[i];
+        if (i === index) {
+            page.setAttribute(ATTR_STATE, 'current');
+        } else if (i < index) {
+            page.setAttribute(ATTR_STATE, 'past');
+        } else if (i > index) {
+            page.setAttribute(ATTR_STATE, 'future');
+        }
+    }
+
+    currentIndex = index;
 }
 
 window.addEventListener('keydown', function (e) {

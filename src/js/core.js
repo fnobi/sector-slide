@@ -1,21 +1,21 @@
-var ATTR_STATE = 'data-state';
+const ATTR_STATE = 'data-state';
 
-var pages = document.querySelectorAll('section,article');
-var currentIndex;
+const pages = document.querySelectorAll('section,article');
+let currentIndex;
 
 function setReady (isReady=true) {
-    for (var i = 0; i < pages.length; i++) (function (i) {
-        var page = pages[i];
+    for (let i = 0; i < pages.length; i++) {
+        const page = pages[i];
         page.setAttribute('data-ready', isReady);
-    })(i);
+    }
 }
 
 function setPageIndex (index) {
     index = Math.max(index, 0);
     index = Math.min(index, pages.length - 1);
 
-    for (var i = 0; i < pages.length; i++) (function (i) {
-        var page = pages[i];
+    for (let i = 0; i < pages.length; i++) {
+        const page = pages[i];
         if (i === index) {
             page.setAttribute(ATTR_STATE, 'current');
         } else if (i < index) {
@@ -23,7 +23,7 @@ function setPageIndex (index) {
         } else if (i > index) {
             page.setAttribute(ATTR_STATE, 'future');
         }
-    })(i);
+    }
     
     currentIndex = index;
 }
