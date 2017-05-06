@@ -3,6 +3,12 @@ const ATTR_STATE = 'data-state';
 const pages = document.querySelectorAll('section,article');
 let currentIndex;
 
+
+function init () {
+    setPageIndex(0);
+    setTimeout(setReady);
+}
+
 function setReady (isReady=true) {
     for (let i = 0; i < pages.length; i++) {
         const page = pages[i];
@@ -45,5 +51,4 @@ window.addEventListener('keydown', function (e) {
     }
 });
 
-setPageIndex(0);
-setReady();
+init();
