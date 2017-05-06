@@ -12,16 +12,15 @@
 ## インストール
 
 ```
-# install
+// install
 $ npm -g install sector-slide
 ```
 
 ## 使い方
 
 ```
-# markdownをスライドに変換
-$ sector-slide sample.md # ./slide/index.html が生成されます
-
-# スライドに変換して、そのままWebサーバーとブラウザでプレビュー
+// markdownをスライドに変換
+$ sector-slide sample.md # ./slide/index.html が生成されます 
+// スライドに変換して、そのままWebサーバーとブラウザでプレビュー
 $ sector-slide --server sample.md
 ```
