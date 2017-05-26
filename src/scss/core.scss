@@ -115,9 +115,14 @@ article {
     }
 
     code {
-        display: block;
-        font-size: 2vw;
+        padding: 0.8vw 1vw;
+    }
+
+    pre {
         white-space: pre;
-        padding: 1vw;
+    }
+    pre code {
+        font-size: 2vw;
+        display: block;
     }
 }
