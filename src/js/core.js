@@ -34,9 +34,7 @@ function initListeners () {
     for (let i = 0; i < allArticle.length; i++) {
         const article = allArticle[i];
         article.addEventListener('click', () => {
-            const nextIndex = article.getAttribute('data-next-index');
-            article.setAttribute('data-start-index', nextIndex);
-            applyInnerPaging(article);
+            incrementInnerPage(article);
         });
     }
 }
@@ -74,14 +72,16 @@ function setupInnerPaging () {
     }
 }
 
-function applyInnerPaging (article) {
+function applyInnerPaging (article, rangeStart = 0) {
     const des = article.querySelectorAll('*');
     const blocks = filterBlocks(des);
-    const attrStartIndex = article.getAttribute('data-start-index');
-    const startIndex = isNaN(attrStartIndex) ? 0 : parseInt(attrStartIndex);
+
+    if (rangeStart >= blocks.length) {
+        rangeStart = 0;
+    }
     
     blocks.forEach((block, index) => {
-        block.style.display = (index < startIndex) ? 'none' : '';
+        block.style.display = (index < rangeStart) ? 'none' : '';
     });
 
     let emitCount = 0;
@@ -90,10 +90,18 @@ function applyInnerPaging (article) {
         emitCount++;
     }
 
-    article.setAttribute('data-next-index', blocks.length - emitCount);
+    article.setAttribute('data-range-start', rangeStart);
+    article.setAttribute('data-range-end', blocks.length - emitCount);
+}
+
+function incrementInnerPage (article) {
+    const rangeStart = parseInt(article.getAttribute('data-range-end')) || 0;
+    applyInnerPaging(article, rangeStart);
 }
 
 function filterBlocks (nodeList) {
+    // TODO: inline要素は除きたい 他は別に残しで良い
+    
     const blocks = [];
     for (let i = 0; i < nodeList.length; i++) {
         const node = nodeList[i];
