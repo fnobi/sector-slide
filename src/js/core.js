@@ -32,6 +32,15 @@ function initListeners () {
             setPageIndex(page);
         }
     });
+
+    window.addEventListener('resize', () => {
+        innerPagerList.forEach((innerPager) => {
+            if (!innerPager) {
+                return;
+            }
+            innerPager.reload();
+        });
+    });
 }
 
 function setReady (isReady=true) {

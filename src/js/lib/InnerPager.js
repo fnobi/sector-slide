@@ -5,7 +5,7 @@ export default class InnerPager extends EventEmitter {
         super();
         this.root = root;
         this.blocks = this.pickupBlocks();
-        this.setRangeStart();
+        this.reload();
     }
 
     pickupBlocks () {
@@ -34,6 +34,10 @@ export default class InnerPager extends EventEmitter {
         calculateRecursive(this.root);
 
         return blocks;
+    }
+
+    reload () {
+        this.setRangeStart(this.rangeStart);
     }
 
     setRangeStart (rangeStart = 0) {
