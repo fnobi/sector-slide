@@ -10,7 +10,6 @@ let currentIndex;
 function init () {
     const defaultPage = parseHash();
     setPageIndex((defaultPage >= 0) ? defaultPage : 0);
-    
     initInnerPager();
     initListeners();
     setTimeout(setReady);
@@ -33,14 +32,6 @@ function initListeners () {
             setPageIndex(page);
         }
     });
-
-    const allArticle = document.querySelectorAll('article');
-    for (let i = 0; i < allArticle.length; i++) {
-        const article = allArticle[i];
-        article.addEventListener('click', () => {
-            innerPagerList[i].increment();
-        });
-    }
 }
 
 function setReady (isReady=true) {
@@ -70,26 +61,55 @@ function setPageIndex (index) {
 }
 
 function initInnerPager () {
-    const allArticle = document.querySelectorAll('article');
-    for (let i = 0; i < allArticle.length; i++) {
-        innerPagerList.push(new InnerPager(allArticle[i]));
+    for (let i = 0; i < pages.length; i++) {
+        const page = pages[i];
+        if (/^article$/i.test(page.tagName)) {
+            const innerPager = new InnerPager(page);
+            innerPager.on('overEnd', incrementPage);
+            innerPager.on('overStart', decrementPage);
+            innerPagerList[i] = innerPager;
+        } else {
+            innerPagerList[i] = null;
+        }
+    }
+}
+
+function incrementPage () {
+    setPageIndex(currentIndex + 1);
+}
+
+function decrementPage () {
+    setPageIndex(currentIndex - 1);
+}
+
+function increment () {
+    const innerPager = innerPagerList[currentIndex];
+    if (innerPager) {
+        innerPager.increment();
+    } else {
+        incrementPage();
+    }
+}
+
+function decrement () {
+    const innerPager = innerPagerList[currentIndex];
+    if (innerPager) {
+        innerPager.decrement();
+    } else {
+        decrementPage();
     }
 }
 
 window.addEventListener('keydown', function (e) {
     switch (e.which) {
     case 37: // left
-        setPageIndex(currentIndex - 1);
-        break;
+        decrement(); break;
     case 38: // up
-        setPageIndex(currentIndex - 1);
-        break;
+        decrement(); break;
     case 39: // right
-        setPageIndex(currentIndex + 1);
-        break;
+        increment(); break;
     case 40: // down
-        setPageIndex(currentIndex + 1);
-        break;
+        increment(); break;
     }
 });
 

@@ -1,5 +1,8 @@
-export default class InnerPager {
+import EventEmitter from 'events';
+
+export default class InnerPager extends EventEmitter {
     constructor (root) {
+        super();
         this.root = root;
         this.blocks = this.pickupBlocks();
         this.setRangeStart();
@@ -35,7 +38,8 @@ export default class InnerPager {
 
     setRangeStart (rangeStart = 0) {
         if (rangeStart >= this.blocks.length) {
-            rangeStart = 0;
+            this.emit('overEnd');
+            return;
         }
         
         this.blocks.forEach((block, index) => {
@@ -48,12 +52,35 @@ export default class InnerPager {
             omitCount++;
         }
 
-        this.root.setAttribute('data-range-start', rangeStart);
-        this.root.setAttribute('data-range-end', this.blocks.length - omitCount);
+        this.rangeStart = rangeStart;
+        this.rangeEnd = this.blocks.length - omitCount;
     }
 
+    setRangeEnd (rangeEnd = this.blocks.length) {
+        if (rangeEnd <= 0) {
+            this.emit('overStart');
+            return;
+        }
+        
+        this.blocks.forEach((block, index) => {
+            block.style.display = (index >= rangeEnd) ? 'none' : '';
+        });
+
+        let omitCount = 0;
+        while (this.root.scrollHeight > this.root.offsetHeight) {
+            this.blocks[omitCount].style.display = 'none';
+            omitCount++;
+        }
+
+        this.rangeStart = omitCount;
+        this.rangeEnd = rangeEnd;
+    }
+    
     increment () {
-        const rangeStart = parseInt(this.root.getAttribute('data-range-end')) || 0;
-        this.setRangeStart(rangeStart);
+        this.setRangeStart(this.rangeEnd);
+    }
+
+    decrement () {
+        this.setRangeEnd(this.rangeStart);
     }
 }
