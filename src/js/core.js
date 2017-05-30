@@ -74,7 +74,7 @@ function setupInnerPaging () {
 
 function applyInnerPaging (article, rangeStart = 0) {
     const des = article.querySelectorAll('*');
-    const blocks = filterBlocks(des);
+    const blocks = pickupBlocks(article);
 
     if (rangeStart >= blocks.length) {
         rangeStart = 0;
@@ -84,14 +84,14 @@ function applyInnerPaging (article, rangeStart = 0) {
         block.style.display = (index < rangeStart) ? 'none' : '';
     });
 
-    let emitCount = 0;
+    let omitCount = 0;
     while (article.scrollHeight > article.offsetHeight) {
-        blocks[blocks.length - (emitCount + 1)].style.display = 'none';
-        emitCount++;
+        blocks[blocks.length - (omitCount + 1)].style.display = 'none';
+        omitCount++;
     }
 
     article.setAttribute('data-range-start', rangeStart);
-    article.setAttribute('data-range-end', blocks.length - emitCount);
+    article.setAttribute('data-range-end', blocks.length - omitCount);
 }
 
 function incrementInnerPage (article) {
@@ -99,18 +99,34 @@ function incrementInnerPage (article) {
     applyInnerPaging(article, rangeStart);
 }
 
-function filterBlocks (nodeList) {
-    // TODO: inline要素は除きたい 他は別に残しで良い
-    
+function pickupBlocks (root) {
     const blocks = [];
-    for (let i = 0; i < nodeList.length; i++) {
-        const node = nodeList[i];
-        const isHeader = /^h[1-9][0-9]*$/i.test(node.tagName);
-        const isParent = node.children.length;
-        if (!isHeader && !isParent) {
-            blocks.push(node);
+
+    function calculateRecursive (el) {
+        // TODO: offsetHeightとるために戻してるけど、やめたい
+        el.style.display = '';
+
+        const isHeader = /^h[1-9][0-9]*$/i.test(el.tagName);
+        
+        if (el.children.length) {
+            let height = 0;
+            for (let i = 0; i < el.children.length; i++) {
+                height += calculateRecursive(el.children[i]);
+            }
+            if (!height && !isHeader) {
+                blocks.push(el);
+            }
+            return height;
+        } else {
+            if (el.offsetHeight && !isHeader) {
+                blocks.push(el);
+            }
+            return el.offsetHeight;
         }
     }
+
+    calculateRecursive(root);
+    
     return blocks;
 }
 
