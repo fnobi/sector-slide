@@ -1,12 +1,16 @@
+import InnerPager from './lib/InnerPager';
+
 const ATTR_STATE = 'data-state';
 
 const pages = document.querySelectorAll('section,article');
+const innerPagerList = [];
 let currentIndex;
 
 
 function init () {
     const defaultPage = parseHash();
     setPageIndex((defaultPage >= 0) ? defaultPage : 0);
+    initInnerPager();
     initListeners();
     setTimeout(setReady);
 }
@@ -27,6 +31,15 @@ function initListeners () {
         if (page >= 0) {
             setPageIndex(page);
         }
+    });
+
+    window.addEventListener('resize', () => {
+        innerPagerList.forEach((innerPager) => {
+            if (!innerPager) {
+                return;
+            }
+            innerPager.reload();
+        });
     });
 }
 
@@ -56,20 +69,56 @@ function setPageIndex (index) {
     location.hash = `#p${index}`;
 }
 
+function initInnerPager () {
+    for (let i = 0; i < pages.length; i++) {
+        const page = pages[i];
+        if (/^article$/i.test(page.tagName)) {
+            const innerPager = new InnerPager(page);
+            innerPager.on('overEnd', incrementPage);
+            innerPager.on('overStart', decrementPage);
+            innerPagerList[i] = innerPager;
+        } else {
+            innerPagerList[i] = null;
+        }
+    }
+}
+
+function incrementPage () {
+    setPageIndex(currentIndex + 1);
+}
+
+function decrementPage () {
+    setPageIndex(currentIndex - 1);
+}
+
+function increment () {
+    const innerPager = innerPagerList[currentIndex];
+    if (innerPager) {
+        innerPager.increment();
+    } else {
+        incrementPage();
+    }
+}
+
+function decrement () {
+    const innerPager = innerPagerList[currentIndex];
+    if (innerPager) {
+        innerPager.decrement();
+    } else {
+        decrementPage();
+    }
+}
+
 window.addEventListener('keydown', function (e) {
     switch (e.which) {
     case 37: // left
-        setPageIndex(currentIndex - 1);
-        break;
+        decrement(); break;
     case 38: // up
-        setPageIndex(currentIndex - 1);
-        break;
+        decrement(); break;
     case 39: // right
-        setPageIndex(currentIndex + 1);
-        break;
+        increment(); break;
     case 40: // down
-        setPageIndex(currentIndex + 1);
-        break;
+        increment(); break;
     }
 });
 
