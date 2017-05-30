@@ -8,6 +8,7 @@ function init () {
     const defaultPage = parseHash();
     setPageIndex((defaultPage >= 0) ? defaultPage : 0);
     initListeners();
+    setupInnerPaging();
     setTimeout(setReady);
 }
 
@@ -28,6 +29,16 @@ function initListeners () {
             setPageIndex(page);
         }
     });
+
+    const allArticle = document.querySelectorAll('article');
+    for (let i = 0; i < allArticle.length; i++) {
+        const article = allArticle[i];
+        article.addEventListener('click', () => {
+            const nextIndex = article.getAttribute('data-next-index');
+            article.setAttribute('data-start-index', nextIndex);
+            applyInnerPaging(article);
+        });
+    }
 }
 
 function setReady (isReady=true) {
@@ -54,6 +65,45 @@ function setPageIndex (index) {
     
     currentIndex = index;
     location.hash = `#p${index}`;
+}
+
+function setupInnerPaging () {
+    const allArticle = document.querySelectorAll('article');
+    for (let i = 0; i < allArticle.length; i++) {
+        applyInnerPaging(allArticle[i]);
+    }
+}
+
+function applyInnerPaging (article) {
+    const des = article.querySelectorAll('*');
+    const blocks = filterBlocks(des);
+    const attrStartIndex = article.getAttribute('data-start-index');
+    const startIndex = isNaN(attrStartIndex) ? 0 : parseInt(attrStartIndex);
+    
+    blocks.forEach((block, index) => {
+        block.style.display = (index < startIndex) ? 'none' : '';
+    });
+
+    let emitCount = 0;
+    while (article.scrollHeight > article.offsetHeight) {
+        blocks[blocks.length - (emitCount + 1)].style.display = 'none';
+        emitCount++;
+    }
+
+    article.setAttribute('data-next-index', blocks.length - emitCount);
+}
+
+function filterBlocks (nodeList) {
+    const blocks = [];
+    for (let i = 0; i < nodeList.length; i++) {
+        const node = nodeList[i];
+        const isHeader = /^h[1-9][0-9]*$/i.test(node.tagName);
+        const isParent = node.children.length;
+        if (!isHeader && !isParent) {
+            blocks.push(node);
+        }
+    }
+    return blocks;
 }
 
 window.addEventListener('keydown', function (e) {
