@@ -1,14 +1,18 @@
+import InnerPager from './lib/InnerPager';
+
 const ATTR_STATE = 'data-state';
 
 const pages = document.querySelectorAll('section,article');
+const innerPagerList = [];
 let currentIndex;
 
 
 function init () {
     const defaultPage = parseHash();
     setPageIndex((defaultPage >= 0) ? defaultPage : 0);
+    
+    initInnerPager();
     initListeners();
-    setupInnerPaging();
     setTimeout(setReady);
 }
 
@@ -34,7 +38,7 @@ function initListeners () {
     for (let i = 0; i < allArticle.length; i++) {
         const article = allArticle[i];
         article.addEventListener('click', () => {
-            incrementInnerPage(article);
+            innerPagerList[i].increment();
         });
     }
 }
@@ -65,69 +69,11 @@ function setPageIndex (index) {
     location.hash = `#p${index}`;
 }
 
-function setupInnerPaging () {
+function initInnerPager () {
     const allArticle = document.querySelectorAll('article');
     for (let i = 0; i < allArticle.length; i++) {
-        applyInnerPaging(allArticle[i]);
+        innerPagerList.push(new InnerPager(allArticle[i]));
     }
-}
-
-function applyInnerPaging (article, rangeStart = 0) {
-    const des = article.querySelectorAll('*');
-    const blocks = pickupBlocks(article);
-
-    if (rangeStart >= blocks.length) {
-        rangeStart = 0;
-    }
-    
-    blocks.forEach((block, index) => {
-        block.style.display = (index < rangeStart) ? 'none' : '';
-    });
-
-    let omitCount = 0;
-    while (article.scrollHeight > article.offsetHeight) {
-        blocks[blocks.length - (omitCount + 1)].style.display = 'none';
-        omitCount++;
-    }
-
-    article.setAttribute('data-range-start', rangeStart);
-    article.setAttribute('data-range-end', blocks.length - omitCount);
-}
-
-function incrementInnerPage (article) {
-    const rangeStart = parseInt(article.getAttribute('data-range-end')) || 0;
-    applyInnerPaging(article, rangeStart);
-}
-
-function pickupBlocks (root) {
-    const blocks = [];
-
-    function calculateRecursive (el) {
-        // TODO: offsetHeightとるために戻してるけど、やめたい
-        el.style.display = '';
-
-        const isHeader = /^h[1-9][0-9]*$/i.test(el.tagName);
-        
-        if (el.children.length) {
-            let height = 0;
-            for (let i = 0; i < el.children.length; i++) {
-                height += calculateRecursive(el.children[i]);
-            }
-            if (!height && !isHeader) {
-                blocks.push(el);
-            }
-            return height;
-        } else {
-            if (el.offsetHeight && !isHeader) {
-                blocks.push(el);
-            }
-            return el.offsetHeight;
-        }
-    }
-
-    calculateRecursive(root);
-    
-    return blocks;
 }
 
 window.addEventListener('keydown', function (e) {
