@@ -11,24 +11,33 @@ export default class InnerPager extends EventEmitter {
     pickupBlocks () {
         const blocks = [];
 
-        function calculateRecursive (el) {
+        function calculateRecursive (el, index = '') {
             const isHeader = /^h[1-9][0-9]*$/i.test(el.tagName);
-            
-            if (el.children.length) {
-                let height = 0;
-                for (let i = 0; i < el.children.length; i++) {
-                    height += calculateRecursive(el.children[i]);
-                }
-                if (!height && !isHeader) {
-                    blocks.push(el);
-                }
-                return height;
-            } else {
-                if (el.offsetHeight && !isHeader) {
-                    blocks.push(el);
-                }
-                return el.offsetHeight;
+            const style = window.getComputedStyle(el);
+            const display = style.display;
+            const hasHeight = el.offsetHeight && (display !== 'inline') && (display !== 'none');
+
+            if (isHeader) {
+                return hasHeight;
             }
+            
+            let childrenHasHeight = false;
+            for (let i = 0; i < el.children.length; i++) {
+                const childHasHeight = calculateRecursive(el.children[i], i);
+                childrenHasHeight = childrenHasHeight || childHasHeight;
+            }
+
+            if (el.children.length) {
+                if (!childrenHasHeight) {
+                    blocks.push(el);
+                }
+            } else {
+                if (hasHeight) {
+                    blocks.push(el);
+                }
+            }
+
+            return hasHeight;
         }
 
         calculateRecursive(this.root);
@@ -51,8 +60,9 @@ export default class InnerPager extends EventEmitter {
         });
 
         let omitCount = 0;
-        while (this.root.scrollHeight > this.root.offsetHeight) {
-            this.blocks[this.blocks.length - (omitCount + 1)].style.display = 'none';
+        while (this.root.scrollHeight > this.root.offsetHeight && omitCount < this.blocks.length) {
+            const index = this.blocks.length - (omitCount + 1);
+            this.blocks[index].style.display = 'none';
             omitCount++;
         }
 
