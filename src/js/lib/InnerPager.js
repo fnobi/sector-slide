@@ -1,5 +1,15 @@
 import EventEmitter from 'events';
 
+const IGNORE_PATTERN = new RegExp('^' + [
+    'header'
+].join('|') + '$', 'i');
+
+const SKIP_PATTERN = new RegExp('^' + [
+    'ul',
+    'ol',
+    'dl'
+].join('|') + '$', 'i');
+
 export default class InnerPager extends EventEmitter {
     constructor (root) {
         super();
@@ -12,32 +22,16 @@ export default class InnerPager extends EventEmitter {
         const blocks = [];
 
         function calculateRecursive (el, index = '') {
-            const isHeader = /^h[1-9][0-9]*$/i.test(el.tagName);
-            const style = window.getComputedStyle(el);
-            const display = style.display;
-            const hasHeight = el.offsetHeight && (display !== 'inline') && (display !== 'none');
-
-            if (isHeader) {
-                return hasHeight;
-            }
-            
-            let childrenHasHeight = false;
-            for (let i = 0; i < el.children.length; i++) {
-                const childHasHeight = calculateRecursive(el.children[i], i);
-                childrenHasHeight = childrenHasHeight || childHasHeight;
-            }
-
-            if (el.children.length) {
-                if (!childrenHasHeight) {
-                    blocks.push(el);
+            Array.from(el.children).forEach((child) => {
+                if (IGNORE_PATTERN.test(child.tagName)) {
+                    return;
                 }
-            } else {
-                if (hasHeight) {
-                    blocks.push(el);
+                if (SKIP_PATTERN.test(child.tagName)) {
+                    calculateRecursive(child);
+                } else {
+                    blocks.push(child);
                 }
-            }
-
-            return hasHeight;
+            });
         }
 
         calculateRecursive(this.root);
