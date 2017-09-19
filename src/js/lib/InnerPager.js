@@ -1,13 +1,8 @@
 import EventEmitter from 'events';
+import _ from 'lodash';
 
 const IGNORE_PATTERN = new RegExp('^' + [
     'header'
-].join('|') + '$', 'i');
-
-const SKIP_PATTERN = new RegExp('^' + [
-    'ul',
-    'ol',
-    'dl'
 ].join('|') + '$', 'i');
 
 export default class InnerPager extends EventEmitter {
@@ -26,10 +21,15 @@ export default class InnerPager extends EventEmitter {
                 if (IGNORE_PATTERN.test(child.tagName)) {
                     return;
                 }
-                if (SKIP_PATTERN.test(child.tagName)) {
-                    calculateRecursive(child);
-                } else {
+
+                const hasTextChild = _.some(child.childNodes, (n) => {
+                    return n.nodeType === Node.TEXT_NODE;
+                });
+
+                if (hasTextChild) {
                     blocks.push(child);
+                } else {
+                    calculateRecursive(child);
                 }
             });
         }
