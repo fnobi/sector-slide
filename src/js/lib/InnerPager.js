@@ -26,7 +26,11 @@ export default class InnerPager extends EventEmitter {
                     return n.nodeType === Node.TEXT_NODE;
                 });
 
-                if (hasTextChild) {
+                const hasOneChild = child.childNodes.length === 1 && (
+                    child.childNodes[0].nodeType === Node.ELEMENT_NODE
+                );
+
+                if (hasTextChild || hasOneChild) {
                     blocks.push(child);
                 } else {
                     calculateRecursive(child);
