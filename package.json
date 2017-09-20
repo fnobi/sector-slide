@@ -1,6 +1,6 @@
 {
   "name": "sector-slide",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "markdown slide tool.",
   "main": "index.js",
   "scripts": {
