@@ -41,6 +41,16 @@ function initListeners () {
             innerPager.reload();
         });
     });
+
+    document.body.addEventListener('click', (e) => {
+        const x = e.pageX;
+        const rate = x / window.innerWidth;
+        if (rate < 0.5) {
+            decrement();
+        } else {
+            increment();
+        }
+    });
 }
 
 function setReady (isReady=true) {
