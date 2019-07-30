@@ -5,7 +5,6 @@ import gulp from 'gulp';
 import source from 'vinyl-source-stream';
 import sass from 'gulp-sass';
 import sassGlob from 'gulp-sass-glob';
-import pleeease from 'gulp-pleeease';
 import browserify from 'browserify';
 import babelify from 'babelify';
 import uglifyify from 'uglifyify';
@@ -14,17 +13,14 @@ import watch from 'gulp-watch';
 
 // const
 const SRC = './src';
-const CONFIG = './src/config';
 const DEST = './template';
 
 
 // css
 gulp.task('sass', () => {
-    const config = require(`${CONFIG}/pleeease.json`);
     return gulp.src(`${SRC}/scss/core.scss`)
         .pipe(sassGlob())
         .pipe(sass())
-        .pipe(pleeease(config))
         .pipe(gulp.dest(DEST));
 });
 
