@@ -4,6 +4,9 @@
 
 - このツールはmarkdownでスライドを作成するためのツールです
 
+## demo
+https://fnobi.github.io/sector-slide/demo/
+
 ### ほかのツールとは何が違うの？
 
 - スライド用に整形したmarkdownを書く必要が（ほとんど）ありません！
