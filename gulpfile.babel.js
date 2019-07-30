@@ -9,7 +9,6 @@ import pleeease from 'gulp-pleeease';
 import browserify from 'browserify';
 import babelify from 'babelify';
 import uglifyify from 'uglifyify';
-import readConfig from 'read-config';
 import watch from 'gulp-watch';
 
 
@@ -21,7 +20,7 @@ const DEST = './template';
 
 // css
 gulp.task('sass', () => {
-    const config = readConfig(`${CONFIG}/pleeease.json`);
+    const config = require(`${CONFIG}/pleeease.json`);
     return gulp.src(`${SRC}/scss/core.scss`)
         .pipe(sassGlob())
         .pipe(sass())
