@@ -5,6 +5,7 @@ import gulp from 'gulp';
 import source from 'vinyl-source-stream';
 import sass from 'gulp-sass';
 import sassGlob from 'gulp-sass-glob';
+import packageImporter from 'node-sass-package-importer';
 import browserify from 'browserify';
 import babelify from 'babelify';
 import uglifyify from 'uglifyify';
@@ -20,7 +21,11 @@ const DEST = './template';
 gulp.task('sass', () => {
     return gulp.src(`${SRC}/scss/core.scss`)
         .pipe(sassGlob())
-        .pipe(sass())
+        .pipe(sass({
+            importer: packageImporter({
+                extensions: ['.scss', '.css']
+            })
+        }))
         .pipe(gulp.dest(DEST));
 });
 
