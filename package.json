@@ -18,8 +18,8 @@
     "markdown": "^0.5.0",
     "mkdir-promise": "^1.0.0",
     "mz": "^2.7.0",
-    "optimist": "^0.6.1",
-    "pug": "^2.0.4"
+    "pug": "^2.0.4",
+    "yargs": "^15.3.1"
   },
   "devDependencies": {
     "@babel/core": "^7.5.5",
